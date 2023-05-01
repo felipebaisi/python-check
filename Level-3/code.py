@@ -50,7 +50,7 @@ class TaxPayer:
         tax_form_path = os.path.normpath(path)
 
         if tax_form_path.startswith(base_dir + "/"):
-            with open(path, 'rb') as form:
+            with open(tax_form_path, 'rb') as form:
                 tax_data = bytearray(form.read())
 
             # assume that taxa data is returned on screen after this
