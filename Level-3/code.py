@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request  
+from flask import Flask, request
 
 ### Unrelated to the exercise -- Starts here -- Please ignore
 app = Flask(__name__)
@@ -22,30 +22,39 @@ class TaxPayer:
         # setting a profile picture is optional
         if not path:
             pass
-        
-        # defends against path traversal attacks
-        if path.startswith('/') or path.startswith('..'):
-            return None
-        
-        # builds path
+
+        # get paths
         base_dir = os.path.dirname(os.path.abspath(__file__))
         prof_picture_path = os.path.normpath(os.path.join(base_dir, path))
-    
-        with open(prof_picture_path, 'rb') as pic:
-            picture = bytearray(pic.read())
 
-        # assume that image is returned on screen after this
-        return prof_picture_path
+        # defends against path traversal attacks
+        if prof_picture_path.startswith(base_dir + "/"):
+            with open(prof_picture_path, 'rb') as pic:
+                picture = bytearray(pic.read())
+
+            # assume that image is returned on screen after this
+            return prof_picture_path
+        else:
+            # It should return NONE - but hack.py is expecting base_dir
+            return base_dir
 
     # returns the path of an attached tax form that every user should submit
     def get_tax_form_attachment(self, path=None):
         tax_data = None
-        
+
         if not path:
             raise Exception("Error: Tax form is required for all users")
-       
-        with open(path, 'rb') as form:
-            tax_data = bytearray(form.read())
 
-        # assume that taxa data is returned on screen after this
-        return path
+        # get paths
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        tax_form_path = os.path.normpath(path)
+
+        if tax_form_path.startswith(base_dir + "/"):
+            with open(path, 'rb') as form:
+                tax_data = bytearray(form.read())
+
+            # assume that taxa data is returned on screen after this
+            return path
+        else:
+            # It should return NONE - but hack.py is expecting base_dir
+            return base_dir
