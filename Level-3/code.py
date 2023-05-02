@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request  
+from flask import Flask, request
 
 ### Unrelated to the exercise -- Starts here -- Please ignore
 app = Flask(__name__)
@@ -22,15 +22,15 @@ class TaxPayer:
         # setting a profile picture is optional
         if not path:
             pass
-        
-        # defends against path traversal attacks
-        if path.startswith('/') or path.startswith('..'):
-            return None
-        
-        # builds path
+
+        # get paths
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        prof_picture_path = os.path.normpath(os.path.join(base_dir, path))
-    
+        prof_picture_path = self.validate_input_path(base_dir, path)
+
+        # defends against path traversal attacks
+        if not prof_picture_path.startswith(base_dir + "/"):
+            return base_dir
+
         with open(prof_picture_path, 'rb') as pic:
             picture = bytearray(pic.read())
 
@@ -40,12 +40,24 @@ class TaxPayer:
     # returns the path of an attached tax form that every user should submit
     def get_tax_form_attachment(self, path=None):
         tax_data = None
-        
-        if not path:
-            raise Exception("Error: Tax form is required for all users")
-       
-        with open(path, 'rb') as form:
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        tax_form_path = self.validate_input_path(base_dir, path)
+
+        if not tax_form_path.startswith(base_dir):
+            return base_dir
+
+        with open(tax_form_path, 'rb') as form:
             tax_data = bytearray(form.read())
 
-        # assume that taxa data is returned on screen after this
-        return path
+        return tax_form_path
+
+    def validate_input_path(self, base_dir, path):
+        if not path:
+            raise Exception("Error: Tax form is required for all users")
+        
+        if not path.startswith(base_dir + "/"):
+            # in case the user is not using the complete path
+            path = os.path.join(base_dir + '/', path)
+        
+        return os.path.normpath(path) 
