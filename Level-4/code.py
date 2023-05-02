@@ -150,9 +150,9 @@ class DB_CRUD_ops(object):
             # Going with sanitized to be able to pass the query back to hack.py
             # Ideal -> SELECT * price FROM stocks where symbol = ? , (stock_symbol,)
             res = "[METHOD EXECUTED] get_stock_price\n"
-            query = "SELECT price FROM stocks WHERE symbol = '" + sanitized_query_input + "'"
-            res += "[QUERY] " + query + "\n"
-            cur.execute(query)
+            sanitized_query = "SELECT price FROM stocks WHERE symbol = '" + sanitized_query_input + "'"
+            res += "[QUERY] " + sanitized_query + "\n"
+            cur.execute(sanitized_query)
             query_outcome = cur.fetchall()
             for result in query_outcome:
                 res += "[RESULT] " + str(result) + "\n"
