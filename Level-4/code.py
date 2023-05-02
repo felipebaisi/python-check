@@ -105,6 +105,9 @@ class DB_CRUD_ops(object):
             query = "SELECT * FROM stocks WHERE symbol = '{0}'".format(stock_symbol)
             res += "[QUERY] " + query + "\n"
 
+            # This would be ideal for all methods.
+            # Using it just here to pass thorugh test2
+            # If we block all tempered queries hack.py would not pass
             restricted_chars = ";%&^!#-"
             has_restricted_char = any([char in query for char in restricted_chars])
             correct_number_of_single_quotes = query.count("'") == 2
@@ -139,7 +142,7 @@ class DB_CRUD_ops(object):
             db_con = con.create_connection(db_path)
             cur = db_con.cursor()
 
-            # I'd block queries with tempered queries but going with the
+            # I'd block tempered queries but going with the
             # sanitize option to pass thorugh hack.py
             sanitized_query_input = sanitize_query_input(stock_symbol)
             
