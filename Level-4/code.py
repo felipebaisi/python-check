@@ -19,22 +19,14 @@ def sanitize_query_input(query):
     if not isinstance(query, str):
         return query
 
-    # Limit string size
-    # Avoiding polynomial regular expression used on uncontrolled data
-    encoding = "utf-8"
-    char_size = len("A".encode(encoding))
-    new_length = len(query.encode(encoding)) // char_size * char_size
-    new_query = query[:new_length]
-
-
     # Regex to get only the needed input
     # Strip out possible tempered query
-    pattern = r"(\')?.*(\')?;"
+    pattern = r".*;"
     regex = re.compile(pattern)
-    match = regex.match(new_query)
-
+    match = regex.match(query)
     if match is not None:
         query = match.group()
+    
 
     # checks if input contains characters from the block list
     restricted_chars = ";%&^!#-'\""
