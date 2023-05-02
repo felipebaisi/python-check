@@ -43,14 +43,24 @@ user_account* create_user_account(bool isAdmin, const char* username) {
 bool update_setting(user_account* ua, const char *index, const char *value) {
     char *endptr;
     long i, v;
+
+    // Checking for invalid characters
+    // If found, endptr will point to it. 
     i = strtol(index, &endptr, 10);
     if (*endptr)
         return false;
-    if (i >= SETTINGS_COUNT)
+
+    // I can't also be less than 0
+    if (i >= SETTINGS_COUNT || i < 0)
         return false;
+
+    // Checking for invalid characters
+    // If found, endptr will point to it. 
     v = strtol(value, &endptr, 10);
     if (*endptr)
         return false;
+
+    // Update UA
     ua->setting[i] = v;
     return true;
 }
