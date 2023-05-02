@@ -22,7 +22,9 @@ def sanitize_query_input(query):
     # Regex to get only the needed input
     # Strip out possible tempered query
     pattern = r"(\')?.*(\')?;"
-    match = re.search(pattern, query)
+    regex = re.compile(pattern)
+    match = regex.match(query)
+
     if match is not None:
         query = match.group()
 
