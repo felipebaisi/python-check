@@ -148,15 +148,16 @@ class DB_CRUD_ops(object):
 
             # I'd block tempered queries but going with the
             # sanitize option to pass thorugh hack.py
-            sanitized_query_input = sanitize_query_input(stock_symbol)
+            sanitized_stock_symbol = sanitize_query_input(stock_symbol)
             
-            # Best option here would be also using parameterized statements
-            # Going with sanitized to be able to pass the query back to hack.py
-            # Ideal -> SELECT * price FROM stocks where symbol = ? , (stock_symbol,)
             res = "[METHOD EXECUTED] get_stock_price\n"
-            sanitized_query = "SELECT price FROM stocks WHERE symbol = '" + sanitized_query_input + "'"
-            res += "[QUERY] " + sanitized_query + "\n"
-            cur.execute(sanitized_query)
+            raw_query = "SELECT price FROM stocks WHERE symbol = "
+            formatted_query = raw_query + "'" + sanitized_stock_symbol + "'"
+            res += "[QUERY] " + formatted_query + "\n"
+
+
+            parameterized_query = raw_query + " ? "
+            cur.execute(parameterized_query, (sanitized_stock_symbol,))
             query_outcome = cur.fetchall()
             for result in query_outcome:
                 res += "[RESULT] " + str(result) + "\n"
