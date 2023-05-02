@@ -50,7 +50,8 @@ bool update_setting(user_account* ua, const char *index, const char *value) {
     if (*endptr)
         return false;
 
-    // I can't also be less than 0
+    // 'i' can't be greater than 
+    // SETTINGS_COUNT or less than 0
     if (i >= SETTINGS_COUNT || i < 0)
         return false;
 
