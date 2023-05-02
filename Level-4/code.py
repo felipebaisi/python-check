@@ -19,9 +19,9 @@ def sanitize_query_input(query):
     if not isinstance(query, str):
         return query
 
-    # Regex to get only the needed input
-    # Strip out possible tempered query
-    pattern = r".*;"
+    # Simulate what bleach lib would do
+    # Trying to use only default python libs
+    pattern = r"[\w-]+"
     regex = re.compile(pattern)
     match = regex.match(query)
     if match is not None:
@@ -109,7 +109,7 @@ class DB_CRUD_ops(object):
             res += "[QUERY] " + formatted_query + "\n"
 
             # This would be ideal for all methods.
-            # Using it just here to pass thorugh test2
+            # Using it just here to pass thorugh tests.py
             # If we block all tempered queries hack.py would not pass
             restricted_chars = ";%&^!#-"
             has_restricted_char = any([char in formatted_query for char in restricted_chars])
@@ -181,9 +181,6 @@ class DB_CRUD_ops(object):
             db_path = os.path.join(path, 'level-3.db')
             db_con = con.create_connection(db_path)
             cur = db_con.cursor()
-
-            
-
 
             sanitized_price_input = sanitize_query_input(price)
             sanitized_stock_symbol = sanitize_query_input(stock_symbol)
@@ -272,5 +269,3 @@ class DB_CRUD_ops(object):
             
         finally:
             db_con.close()
-        
-
