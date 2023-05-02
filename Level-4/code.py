@@ -102,22 +102,26 @@ class DB_CRUD_ops(object):
             cur = db_con.cursor() 
             
             res = "[METHOD EXECUTED] get_stock_info\n"
-            query = "SELECT * FROM stocks WHERE symbol = '{0}'".format(stock_symbol)
-            res += "[QUERY] " + query + "\n"
+            raw_query = "SELECT * FROM stocks WHERE symbol = "
+            formatted_query = raw_query + "'{0}'".format(stock_symbol)
+            res += "[QUERY] " + formatted_query + "\n"
 
             # This would be ideal for all methods.
             # Using it just here to pass thorugh test2
             # If we block all tempered queries hack.py would not pass
             restricted_chars = ";%&^!#-"
-            has_restricted_char = any([char in query for char in restricted_chars])
-            correct_number_of_single_quotes = query.count("'") == 2
+            has_restricted_char = any([char in formatted_query for char in restricted_chars])
+            correct_number_of_single_quotes = formatted_query.count("'") == 2
             if has_restricted_char or not correct_number_of_single_quotes:
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
                 return res
 
-            cur.execute(query)
-                
+            # Using parameterized query with sanitized input
+            parameterized_query = raw_query + " ? "
+            sanitized_stock_symbol = sanitize_query_input(stock_symbol)
+            cur.execute(parameterized_query, (sanitized_stock_symbol,))
             query_outcome = cur.fetchall()
+
             for result in query_outcome:
                 res += "[RESULT] " + str(result)
 
